@@ -86,10 +86,13 @@ use yii\helpers\Url;
                         <table id="tablaCarrito" class="row-border items table table-condensed hover nowrap">
                             <thead>
                                 <tr>
-                                    <th>Producto</th>
-                                    <th>Talle</th>
-                                    <th>Precio</th>
-                                    <th>Cantidad</th>
+                                    <th class="encabezadoTabla">Producto</th>
+                                    <th class="encabezadoTabla">Talle</th>
+                                    <th class="encabezadoTabla">Precio unitario</th>
+                                    <th class="encabezadoTabla">Cantidad</th>
+                                    <th class="encabezadoTabla">Descuento</th>
+                                    <th class="encabezadoTabla">Total</th>
+                                    <th class="encabezadoTabla"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -103,10 +106,13 @@ use yii\helpers\Url;
                         <table class="row-border items table table-condensed hover nowrap">
                             <thead>
                                 <tr>
-                                    <th>Total:</th>
-                                    <th></th>
-                                    <th id="totalPrecio">0</th>
-                                    <th id="totalCantidad">0</th>
+                                    <th class="encabezadoTabla">Total:</th>
+                                    <th class="encabezadoTabla"></th>
+                                    <th class="encabezadoTabla"></th>
+                                    <th class="encabezadoTabla" id="totalCantidad">0</th>
+                                    <th class="encabezadoTabla"></th>
+                                    <th class="encabezadoTabla" id="totalPrecio">0</th>
+                                    <th class="encabezadoTabla"></th>
                                 </tr>
                             </thead>
                         </table>
@@ -183,13 +189,13 @@ use yii\helpers\Url;
                     <div class="col">
                         <select class="form-control" id="formaPago">
                             <option value="">Seleccione una opción</option>
-                            <option value="contado">Contado</option>
+                            <option value="contado" selected>Contado</option>
                             <option value="credito">Crédito</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="row mt-3 justify-content-center">
+                <div class="row mt-3 justify-content-center" id="filaAdenda">
                     <div class="col-3 text-end">
                         <label>Adenda:</label>
                     </div>
@@ -212,7 +218,7 @@ use yii\helpers\Url;
 
 <script>
     $(document).ready(function() {
-        $("#tablaCarrito").DataTable({
+       tablaCarrito = $("#tablaCarrito").DataTable({
             language: {
                 "decimal": "",
                 "emptyTable": "No hay informacion disponible",
@@ -239,6 +245,7 @@ use yii\helpers\Url;
             bInfo: false,
             paging: false,
             ordering: false,
+            searching: true,
         });
 
         $("#tablaVentaNotaCredito").DataTable({
@@ -265,6 +272,7 @@ use yii\helpers\Url;
             bFilter: false,
             bInfo: false,
             ordering: false,
+            searching: true,
             dom: "rtip",
         });
 
@@ -292,6 +300,7 @@ use yii\helpers\Url;
             bFilter: false,
             bInfo: false,
             ordering: false,
+            searching: true,
             dom: "rtip",
         });
 
@@ -346,6 +355,7 @@ use yii\helpers\Url;
         $("#filaProductos").hide();
         $("#filaVentaNotaCredito").hide();
         $("#filaCompraNotaCredito").hide();
+        $("#filaAdenda").show();
 
         switch (tipoDocumento) {
             case "VentaFactura":
@@ -360,6 +370,7 @@ use yii\helpers\Url;
                 break;
             case "VentaNotaCredito":
                 $("#filaVentaNotaCredito").show();
+                $("#filaAdenda").hide();
                 break;
             case "CompraNotaCredito":
                 $("#filaCompraNotaCredito").show();
@@ -412,6 +423,8 @@ use yii\helpers\Url;
                                             <td id="talle_` + idTalle + `">` + nombreTalle + `</td>
                                             <td id="precio_` + idProducto + `_` + idTalle + `">` + precioTalle + `</td>
                                             <td id="cantidad_` + idProducto + `_` + idTalle + `"><input type="number" class="form-control" min="1" value="1" onchange="calcularTotales()"></input></td>
+                                            <td id="descuento_` + idProducto + `_` + idTalle + `"><input type="number" class="form-control" min="0" max="100" value="0" onchange="calcularTotales()"></input></td>
+                                            <td id="total_fila_` + idProducto + `_` + idTalle + `"></td>
                                             <td><a href="#" onclick="$(this).closest('tr').remove();calcularTotales()"><i class="fa-solid fa-trash"></i><a/></td>
                                             </tr>`);
             calcularTotales();
@@ -422,16 +435,25 @@ use yii\helpers\Url;
 
         precios = $("td[id^='precio_']");
         cantidades = $("td[id^='cantidad_'] input");
+        descuentos = $("td[id^='descuento_'] input");
 
         precio = 0;
+        precioTotal = 0;
         cantidad = 0;
 
         for (i = 0; i < precios.length; i++) {
-            precio = precio + (parseFloat(precios[i].innerHTML) * parseInt(cantidades[i].value))
+            id = precios[i].id.split("_")
+
+            descuento = parseInt(descuentos[i].value) / 100;
+            precio = parseFloat(precios[i].innerHTML) * parseInt(cantidades[i].value);
+            precioDescuento = precio - (precio * descuento);
+            precioTotal += precioDescuento;
             cantidad = cantidad + parseInt(cantidades[i].value);
+
+            $("#total_fila_" + id[1] + "_" + id[2]).text(precioDescuento);
         }
 
-        $("#totalPrecio").text(precio);
+        $("#totalPrecio").text(precioTotal);
         $("#totalCantidad").text(cantidad);
     }
 
@@ -491,13 +513,15 @@ use yii\helpers\Url;
             idProducto = columnasFila[0].id.split("_")[1];
             idTalle = columnasFila[1].id.split("_")[1];
             precio = parseFloat($(columnasFila[2]).text());
-            cantidad = parseInt($("#cantidad_" + idProducto + "_" + idTalle).val())
+            cantidad = parseInt($("#cantidad_" + idProducto + "_" + idTalle).val());
+            descuento = parseFloat($("#descuento_" + idProducto + "_" + idTalle).val());
 
             fila = {
                 producto: idProducto,
                 talle: idTalle,
                 precio: precio,
-                cantidad: cantidad
+                cantidad: cantidad,
+                descuento: descuento
             }
             datos.push(fila);
         }

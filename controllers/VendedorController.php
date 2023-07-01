@@ -2,11 +2,21 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
 
 class VendedorController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (!empty(Yii::$app->session->get('usuario'))) {
+            return true;
+        } else {
+            return $this->redirect(['login/index']);
+        }
+    }
+
     public function actionIndex()
     {
         $vendedores = VendedorController::obtenerVendedores();
@@ -18,11 +28,13 @@ class VendedorController extends Controller
 
     public function actionCreate()
     {
+        $nick = $_POST['nick'];
         $nombre = $_POST['nombre'];
         $comision = $_POST['comision'];
+        $clave = $_POST['clave'];
 
         //Llamada a la API para crear
-        return $this->redirect(['index']);
+        return 0;
     }
 
     public function actionUpdate()
@@ -30,6 +42,7 @@ class VendedorController extends Controller
         $id = $_POST['id'];
 
         if (isset($_POST['nombre'])) {
+            $nick = $_POST['nick'];
             $nombre = $_POST['nombre'];
             $comision = $_POST['comision'];
 

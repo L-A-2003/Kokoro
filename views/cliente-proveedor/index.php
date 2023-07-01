@@ -352,6 +352,7 @@ $this->title = 'Clientes y proveedores';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: function(data) {
                         if (data.cliprov_tipo == "C") {
@@ -421,7 +422,7 @@ $this->title = 'Clientes y proveedores';
             initComplete: function() {
                 columnas = [0, 1, 2, 3, 4, 5, 6, 7];
                 this.api().columns(columnas).every(function() {
-                    columna = this;
+                    var columna = this;
                     
                     $('<input type="text" class="form-control"/>').appendTo($("#filtros").find("th").eq(columna.index())).on('keyup change', function() {
                         if (columna.search() !== this.value) {

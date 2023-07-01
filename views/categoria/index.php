@@ -162,6 +162,7 @@ $this->title = 'Categorías';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: 'cat_nombre'
                 },
@@ -173,7 +174,7 @@ $this->title = 'Categorías';
             ],
             initComplete: function() {
                 this.api().columns(0).every(function() {
-                    columna = this;
+                    var columna = this;
                     
                     $('<input type="text" class="form-control"/>').appendTo($("#filtros").find("th").eq(columna.index())).on('keyup change', function() {
                         if (columna.search() !== this.value) {

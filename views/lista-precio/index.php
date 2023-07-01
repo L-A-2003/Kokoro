@@ -25,10 +25,16 @@ $this->title = 'Listas de precios';
                         <tr>
                             <th>Nombre</th>
                             <th>Temporada</th>
+                            <th>Categoría</th>
                             <th>Porcentaje de modificación</th>
+                            <th>Desde</th>
+                            <th>Hasta</th>
                             <th></th>
                         </tr>
                         <tr id="filtros">
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -49,7 +55,7 @@ $this->title = 'Listas de precios';
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <?= Html::beginForm(['lista-precio/create'], 'post') ?>
+                <?= Html::beginForm(['lista-precio/create'], 'post', ['onsubmit' => 'return validarFecha("C")']) ?>
                 <div class="modal-body">
                     <div class="container-fluid">
 
@@ -78,6 +84,20 @@ $this->title = 'Listas de precios';
 
                         <div class="row mt-3 justify-content-center">
                             <div class="col-3 text-end">
+                                <label>Categoría:</label>
+                            </div>
+                            <div class="col">
+                                <select name="categoria" type="text" class="form-control">
+                                    <option value="">Seleccione una categoría</option>
+                                    <?php foreach ($categorias as $categoria) {  ?>
+                                        <option value="<?= $categoria->id ?>"><?= $categoria->cat_nombre ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
                                 <label> Porcentaje:<span class="text-danger">*<span></label>
                             </div>
                             <div class="col input-group">
@@ -85,6 +105,24 @@ $this->title = 'Listas de precios';
                                 <div class="input-group-append">
                                     <span class="input-group-text" id="basic-addon2">%</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
+                                <label> Desde:</label>
+                            </div>
+                            <div class="col">
+                                <input id="crearDesde" name="desde" type="date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
+                                <label> Hasta:</label>
+                            </div>
+                            <div class="col">
+                                <input id="crearHasta" name="hasta" type="date" class="form-control">
                             </div>
                         </div>
 
@@ -105,11 +143,11 @@ $this->title = 'Listas de precios';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Editar listaPrecio</h5>
+                <h5 class="modal-title">Editar lista de precio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <?= Html::beginForm(['lista-precio/update'], 'post') ?>
+            <?= Html::beginForm(['lista-precio/update'], 'post', ['onsubmit' => 'return validarFecha("E")']) ?>
             <input name="id" id="editarId" type="text" class="form-control" hidden></input>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -139,6 +177,20 @@ $this->title = 'Listas de precios';
 
                     <div class="row mt-3 justify-content-center">
                         <div class="col-3 text-end">
+                            <label>Categoría:</label>
+                        </div>
+                        <div class="col">
+                            <select name="categoria" id="editarCategoria" type="text" class="form-control">
+                                <option value="">Seleccione una categoría</option>
+                                <?php foreach ($categorias as $categoria) {  ?>
+                                    <option value="<?= $categoria->id ?>"><?= $categoria->cat_nombre ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-3 text-end">
                             <label> Porcentaje:<span class="text-danger">*<span></label>
                         </div>
                         <div class="col input-group">
@@ -146,6 +198,24 @@ $this->title = 'Listas de precios';
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">%</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-3 text-end">
+                            <label> Desde:</label>
+                        </div>
+                        <div class="col">
+                            <input id="editarDesde" name="desde" type="date" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-3 text-end">
+                            <label> Hasta:</label>
+                        </div>
+                        <div class="col">
+                            <input id="editarHasta" name="hasta" type="date" class="form-control">
                         </div>
                     </div>
 
@@ -218,6 +288,7 @@ $this->title = 'Listas de precios';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: 'list_nombre'
                 },
@@ -226,7 +297,16 @@ $this->title = 'Listas de precios';
                         if (data.list_temporada != null) {
                             return data.list_temporada;
                         } else {
-                            return "No tiene";
+                            return "-";
+                        }
+                    }
+                },
+                {
+                    data: function(data) {
+                        if (data.list_categoria != null) {
+                            return data.list_categoria;
+                        } else {
+                            return "-";
                         }
                     }
                 },
@@ -237,15 +317,33 @@ $this->title = 'Listas de precios';
                 },
                 {
                     data: function(data) {
+                        if (data.list_desde != null) {
+                            return data.list_desde;
+                        } else {
+                            return "-";
+                        }
+                    }
+                },
+                {
+                    data: function(data) {
+                        if (data.list_hasta != null) {
+                            return data.list_hasta;
+                        } else {
+                            return "-";
+                        }
+                    }
+                },
+                {
+                    data: function(data) {
                         return "<a class='me-2' onclick='actualizarListaPrecio(" + data.id + ")'><i class='fa-solid fa-pencil'></i></a><a class='' onclick='eliminarListaPrecio(" + data.id + ",`" + data.list_nombre + "`)'><i class='fa-solid fa-trash'></i></a>"
                     }
                 }
             ],
             initComplete: function() {
-                columnas = [0, 1, 2];
+                columnas = [0, 1, 2, 3, 4, 5];
                 this.api().columns(columnas).every(function() {
-                    columna = this;
-
+                   var columna = this;
+    
                     $('<input type="text" class="form-control"/>').appendTo($("#filtros").find("th").eq(columna.index())).on('keyup change', function() {
                         if (columna.search() !== this.value) {
                             columna.search(this.value).draw();
@@ -280,4 +378,48 @@ $this->title = 'Listas de precios';
             },
         });
     }
+
+    function validarFecha(form) {
+        if (form == 'C') {
+            desde = $("#crearDesde").val();
+            hasta = $("#crearHasta").val();
+            modal = "#modalNuevoListaPrecio";
+        } else {
+            desde = $("#editarDesde").val();
+            hasta = $("#editarHasta").val();
+            modal = "#modalEditarListaPrecio";
+        }
+
+        if ((desde != "" && hasta == "") || (desde == "" && hasta != "")) {
+            $("#textoModalAdvertencia").empty();
+            $("#textoModalAdvertencia").append("Ambos campos de fecha deben estar rellenos o vacíos");
+            $(modal).modal("hide");
+            $("#modalAdvertencia").modal("show");
+            $("#btnAdvertencia").on('click', function() {
+                $("#modalAdvertencia").modal("hide");
+                $(modal).modal("show")
+            });
+            return false;
+        } else {
+            if (desde > hasta) {
+                $("#textoModalAdvertencia").empty();
+                $("#textoModalAdvertencia").append("La fecha 'Desde' es menor a la fecha 'Hasta'");
+                $(modal).modal("hide");
+                $("#modalAdvertencia").modal("show");
+                $("#btnAdvertencia").on('click', function() {
+                    $("#modalAdvertencia").modal("hide");
+                    $(modal).modal("show")
+                });
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        $('input[name=porcentaje]').number(true, 2, '.', ',');
+    });
 </script>

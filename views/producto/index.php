@@ -395,6 +395,7 @@ $this->title = 'Productos';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: 'prod_nombre'
                 },
@@ -409,7 +410,7 @@ $this->title = 'Productos';
                         if (data.prod_temporada != '') {
                             return data.prod_temporada;
                         } else {
-                            return "No tiene";
+                            return "-";
                         }
                     }
                 },
@@ -418,7 +419,7 @@ $this->title = 'Productos';
                         if (data.prod_lista_precio != '') {
                             return data.prod_lista_precio;
                         } else {
-                            return "No tiene";
+                            return "-";
                         }
                     }
                 },
@@ -429,9 +430,9 @@ $this->title = 'Productos';
                 }
             ],
             initComplete: function() {
-                columnas = [0, 1, 2, 3];
+                columnas = [0, 1, 2, 3, 4];
                 this.api().columns(columnas).every(function() {
-                    columna = this;
+                    var columna = this;
 
                     $('<input type="text" class="form-control"/>').appendTo($("#filtros").find("th").eq(columna.index())).on('keyup change', function() {
                         if (columna.search() !== this.value) {
@@ -468,6 +469,7 @@ $this->title = 'Productos';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: function(data) {
                         return "<input class='form-check-input' type='checkbox' id='" + data.id + "' onclick='desbloquearTalle(this.id)'>";
@@ -524,6 +526,7 @@ $this->title = 'Productos';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
                     data: function(data) {
                         return "<input class='form-check-input' type='checkbox' id='actualizar_" + data.id + "' onclick='desbloquearTalle(this.id)'>";

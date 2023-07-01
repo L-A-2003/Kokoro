@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
-use yii\httpclient\Client;
 
 class LoginController extends Controller
 {
@@ -14,13 +14,30 @@ class LoginController extends Controller
 
     public function actionLogin()
     {
-
         $usuario = $_POST['usuario'];
         $clave = $_POST['clave'];
 
         //Llamada a la api para logearse
 
-        return "KFvs3zAyOSGXc3i5L3gtP3F7DMLbPmSEJ6U6OFAZaOxI2qIo0399iSjIA4LF0qvA"; //return de la api
+        if (true) { //Si los datos son correctos
+
+            $session = Yii::$app->session;
+            $session->open();
+            $session->set('usuario', $usuario);
+            $session->set('tipo', 'Administrador');//Esto viene por API
+
+            return 2;
+        } else {
+            return 0;
+        }
+    }
+
+    public function actionLogout()
+    {
+            $session = Yii::$app->session;
+            $session->close();
+
+         $this->redirect(['index']);
     }
 
     public function actionCambiarClave()
@@ -32,7 +49,7 @@ class LoginController extends Controller
             //Llamada a la api para cambiar la clave
 
             return 0; //return de la api
-        } else{
+        } else {
             return $this->render('cambiarClave');
         }
     }

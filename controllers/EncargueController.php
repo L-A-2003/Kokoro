@@ -6,7 +6,7 @@ use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
 
-class CategoriaController extends Controller
+class EncargueController extends Controller
 {
     public function beforeAction($action)
     {
@@ -19,36 +19,11 @@ class CategoriaController extends Controller
 
     public function actionIndex()
     {
-        $categorias = CategoriaController::obtenerCategorias();
+        //$encargues = EncargueController::obtenerEncargues();
 
         return $this->render('index', [
-            'categorias' => $categorias
+            //'encargues' => $encargues
         ]);
-    }
-
-    public function actionCreate()
-    {
-        $nombre = $_POST['nombre'];
-
-        //Llamada a la API para crear
-        return $this->redirect(['index']);
-    }
-
-    public function actionUpdate()
-    {
-        $id = $_POST['id'];
-
-        if (isset($_POST['nombre'])) {
-            $nombre = $_POST['nombre'];
-
-            //Llamada a la API para actualizar
-            return $this->redirect(['index']);
-        } else {
-
-            $categoria = $this->obtenerCategoria($id);
-
-            return $categoria;
-        }
     }
 
     public function actionDelete()
@@ -59,23 +34,23 @@ class CategoriaController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function obtenerCategoria($id)
+    public function obtenerEncargue($id)
     {
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/categorias/' . $id)
+            ->setUrl('http://localhost:3000/encargues/' . $id)
             ->send();
 
         return $response->getContent();
     }
 
-    static public function obtenerCategorias()
+    static public function obtenerEncargues()
     {
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/categorias/')
+            ->setUrl('http://localhost:3000/encargues/')
             ->send();
 
         return $response->getContent();

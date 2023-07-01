@@ -36,7 +36,7 @@ use yii\helpers\Url;
 
                     <div class="row justify-content-center">
                         <div class="col-10 text-center">
-                            <input type="text" id="usuario" class="form-control" required></input>
+                            <input type="text" id="usuario" name="usuario" class="form-control" required></input>
                         </div>
                     </div>
 
@@ -48,7 +48,7 @@ use yii\helpers\Url;
 
                     <div class="row justify-content-center">
                         <div class="col-10 text-center">
-                            <input type="text" id="clave" class="form-control" required></input>
+                            <input type="text" id="clave" name="clave" class="form-control" required></input>
                         </div>
                     </div>
 
@@ -65,7 +65,7 @@ use yii\helpers\Url;
 
     <script>
         $(document).ready(function() {
-            //$("#navbar").hide();
+            $("#navbar").hide();
         });
 
         function login() {
@@ -94,8 +94,7 @@ use yii\helpers\Url;
                             $("#modalAdvertencia").modal("show");
                             break;
                         default:
-                            localStorage.setItem("token", result);
-                            //Redirigir al index
+                            window.location.href = "<?= Url::toRoute(['site/index']); ?>";
                             break;
                     }
                 },

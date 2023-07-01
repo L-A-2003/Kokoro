@@ -6,6 +6,15 @@
 use app\widgets\Alert;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
+
+$session = Yii::$app->session;
+$invitado = empty(Yii::$app->session->get('usuario'));
+
+if (!$invitado) {
+    $usuario = $session->get('usuario');
+    $tipo = $session->get('tipo');
+}
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -126,6 +135,14 @@ use yii\helpers\Url;
     .nav-link:hover {
         border-color: #DFA67B !important;
     }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .encabezadoTabla{
+        width:14%;
+    }
 </style>
 
 <head>
@@ -146,39 +163,56 @@ use yii\helpers\Url;
             </button>
 
             <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
+                <?php if (!$invitado) { ?>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['temporada/index']); ?>">Temporadas</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['talle/index']); ?>">Talles</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['categoria/index']); ?>">Categorías</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['producto/index']); ?>">Productos</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['cliente-proveedor/index']); ?>">Clientes y proveedores</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['encargue/index']); ?>">Encargues</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['documento/index']); ?>">Documentos</a>
+                        </li>
+                        <?php if ($tipo == 'Administrador') { ?>
+                            <li class="nav-item active">
+                                <a class="nav-link" href="<?= Url::toRoute(['vendedor/index']); ?>">Vendedores</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link" href="<?= Url::toRoute(['lista-precio/index']); ?>">Listas de precios</a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                <?php } ?>
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['usuario/index']); ?>">Usuarios</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['vendedor/index']); ?>">Vendedores</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['temporada/index']); ?>">Temporadas</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['talle/index']); ?>">Talles</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['lista-precio/index']); ?>">Listas de precios</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['categoria/index']); ?>">Categorías</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['producto/index']); ?>">Productos</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['cliente-proveedor/index']); ?>">Clientes y proveedores</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['login/index']); ?>">Iniciar sesion</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="<?= Url::toRoute(['login/cambiar-clave']); ?>">Cambiar clave</a>
-                    </li>
+
+                    <?php if ($invitado) { ?>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="<?= Url::toRoute(['login/index']); ?>">Iniciar sesion</a>
+                        </li>
+                    <?php } else { ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <?= $usuario ?> (<?= $tipo ?>)
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="nav-link" href="<?= Url::toRoute(['login/cambiar-clave']); ?>">Cambiar clave</a></li>
+                                <li> <a class="nav-link" href="<?= Url::toRoute(['login/logout']); ?>">Cerrar sesion</a></li>
+                            </ul>
+                        </li>
+                    <?php } ?>
                 </ul>
             </div>
         </nav>

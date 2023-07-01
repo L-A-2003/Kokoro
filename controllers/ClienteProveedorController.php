@@ -2,11 +2,21 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
 
 class ClienteProveedorController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (!empty(Yii::$app->session->get('usuario'))) {
+            return true;
+        } else {
+            return $this->redirect(['login/index']);
+        }
+    }
+
     public function actionIndex()
     {
         $clientesProveedores = ClienteProveedorController::obtenerClientesProveedores();

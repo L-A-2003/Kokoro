@@ -2,12 +2,22 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
 use yii\helpers\Url;
 
 class VentaController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (!empty(Yii::$app->session->get('usuario'))) {
+            return true;
+        } else {
+            return $this->redirect(['login/index']);
+        }
+    }
+
     public function actionCreate()
     {
         $tipoDocumento = $_POST['tipoDocumento'];

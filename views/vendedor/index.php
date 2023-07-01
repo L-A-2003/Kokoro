@@ -23,11 +23,13 @@ $this->title = 'Vendedores';
                 <table id="tablaVendedores" class="row-border items table table-condensed hover nowrap">
                     <thead>
                         <tr>
+                            <th>Usuario</th>
                             <th>Nombre</th>
                             <th>Comisión</th>
                             <th></th>
                         </tr>
                         <tr id="filtros">
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -47,16 +49,25 @@ $this->title = 'Vendedores';
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <?= Html::beginForm(['vendedor/create'], 'post') ?>
+                <?= Html::beginForm(['vendedor/create'], 'post', ['onsubmit' => 'event.preventDefault()', 'id' => 'formCreate']) ?>
                 <div class="modal-body">
                     <div class="container-fluid">
+
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
+                                <label>Usuario:<span class="text-danger">*<span></label>
+                            </div>
+                            <div class="col">
+                                <input id="nick" name="nick" type="text" placeholder="Usuario" class="form-control" required></input>
+                            </div>
+                        </div>
 
                         <div class="row mt-3 justify-content-center">
                             <div class="col-3 text-end">
                                 <label>Nombre:<span class="text-danger">*<span></label>
                             </div>
                             <div class="col">
-                                <input name="nombre" type="text" placeholder="Nombre" class="form-control" required></input>
+                                <input id="nombre" name="nombre" type="text" placeholder="Nombre" class="form-control" required></input>
                             </div>
                         </div>
 
@@ -64,11 +75,28 @@ $this->title = 'Vendedores';
                             <div class="col-3 text-end">
                                 <label>Comisión:<span class="text-danger">*<span></label>
                             </div>
-
                             <div class="col input-group">
-                                <input name="comision" type="text" placeholder="Comisión" class="form-control" required aria-describedby="basic-addon2">
+                                <input id="comision" name="comision" type="text" placeholder="Comisión" class="form-control" required aria-describedby="basic-addon2">
                                 <div class="input-group-append">
                                     <span class="input-group-text" id="basic-addon2">%</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3 justify-content-center">
+                                <div class="col-3 text-end">
+                                    <label>Clave:<span class="text-danger">*<span></label>
+                                </div>
+                                <div class="col">
+                                    <input id="clave" name="clave" type="text" placeholder="Clave" class="form-control" required></input>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3 justify-content-center">
+                                <div class="col-3 text-end">
+                                    <label>Repetir clave:<span class="text-danger">*<span></label>
+                                </div>
+                                <div class="col">
+                                    <input id="repetirClave" type="text" placeholder="Repetir clave" class="form-control" required></input>
                                 </div>
                             </div>
 
@@ -79,7 +107,7 @@ $this->title = 'Vendedores';
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" onclick="$('#modalNuevoVendedor').modal('hide');">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear</button>
+                    <button type="submit" class="btn btn-primary" onclick="verificarClaves()">Crear</button>
                 </div>
                 <?= Html::endForm() ?>
             </div>
@@ -99,6 +127,15 @@ $this->title = 'Vendedores';
             <input name="id" id="editarId" type="text" class="form-control" hidden></input>
             <div class="modal-body">
                 <div class="container-fluid">
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-3 text-end">
+                            <label>Usuario:<span class="text-danger">*<span></label>
+                        </div>
+                        <div class="col">
+                            <input name="nick" id="editarNick" type="text" placeholder="Usuario" class="form-control" required></input>
+                        </div>
+                    </div>
 
                     <div class="row mt-3 justify-content-center">
                         <div class="col-3 text-end">
@@ -190,7 +227,11 @@ $this->title = 'Vendedores';
             bFilter: false,
             paging: false,
             ordering: false,
+            searching: true,
             columns: [{
+                    data: 'ven_nick'
+                },
+                {
                     data: 'ven_nombre'
                 },
                 {
@@ -205,9 +246,9 @@ $this->title = 'Vendedores';
                 }
             ],
             initComplete: function() {
-                columnas = [0, 1];
+                columnas = [0, 1, 2];
                 this.api().columns(columnas).every(function() {
-                    columna = this;
+                    var columna = this;
 
                     $('<input type="text" class="form-control"/>').appendTo($("#filtros").find("th").eq(columna.index())).on('keyup change', function() {
                         if (columna.search() !== this.value) {
@@ -236,6 +277,7 @@ $this->title = 'Vendedores';
             },
             success: function(result) {
                 data = JSON.parse(result);
+                $("#editarNick").val(data.ven_nick);
                 $("#editarNombre").val(data.ven_nombre);
                 $("#editarComision").val(data.ven_comision);
 
@@ -243,4 +285,48 @@ $this->title = 'Vendedores';
             },
         });
     }
+
+    function verificarClaves() {
+        clave = $("#clave").val();
+        repetirClave = $("#repetirClave").val();
+
+        if (clave == repetirClave) {
+
+            nick = $("#nick").val();
+            nombre = $("#nombre").val();
+            comision = $("#comision").val();
+
+            $.ajax({
+                method: "POST",
+                url: "<?= Url::toRoute(['vendedor/create']); ?>",
+                data: {
+                    _csrf: "<?= Yii::$app->request->csrfToken; ?>",
+                    nick: nick,
+                    nombre: nombre,
+                    comision: comision,
+                    clave: clave
+                },
+                success: function(result) {
+                    location.reload();
+                },
+            });
+        } else {
+
+            $("#btnAdvertencia").on('click', function() {
+                $("#modalAdvertencia").modal("hide");
+                $("#modalNuevoVendedor").modal("show")
+            })
+
+            $("#modalNuevoVendedor").modal("hide");
+            $("#textoModalAdvertencia").empty();
+            $("#textoModalAdvertencia").append("Las claves no coinciden");
+            $("#modalAdvertencia").modal("show");
+        }
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        $('input[name=comision]').number(true, 2, '.', ',');
+    });
 </script>

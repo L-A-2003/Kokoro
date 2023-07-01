@@ -2,19 +2,31 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
 
 class ListaPrecioController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (!empty(Yii::$app->session->get('usuario'))) {
+            return true;
+        } else {
+            return $this->redirect(['login/index']);
+        }
+    }
+
     public function actionIndex()
     {
         $listasPrecios = ListaPrecioController::obtenerListasPrecios();
         $temporadas = TemporadaController::obtenerTemporadas();
+        $categorias = CategoriaController::obtenerCategorias();
 
         return $this->render('index', [
             'listasPrecios' => $listasPrecios,
             'temporadas' => json_decode($temporadas),
+            'categorias' => json_decode($categorias)
         ]);
     }
 
@@ -23,6 +35,24 @@ class ListaPrecioController extends Controller
         $nombre = $_POST['nombre'];
         $porcentajeModificacion = $_POST['porcentaje'];
         $temporada = $_POST['temporada'];
+
+        if (isset($_POST['categoria'])) {
+            $categoria = $_POST['categoria'];
+        } else {
+            $categoria = null;
+        }
+
+        if (isset($_POST['desde'])) {
+            $desde = $_POST['desde'];
+        } else {
+            $desde = null;
+        }
+
+        if (isset($_POST['hasta'])) {
+            $hasta = $_POST['hasta'];
+        } else {
+            $hasta = null;
+        }
 
         //Llamada a la API para crear
         return $this->redirect(['index']);
@@ -36,6 +66,24 @@ class ListaPrecioController extends Controller
             $nombre = $_POST['nombre'];
             $porcentajeModificacion = $_POST['porcentaje'];
             $temporada = $_POST['temporada'];
+
+            if (isset($_POST['categoria'])) {
+                $categoria = $_POST['categoria'];
+            } else {
+                $categoria = null;
+            }
+
+            if (isset($_POST['desde'])) {
+                $desde = $_POST['desde'];
+            } else {
+                $desde = null;
+            }
+
+            if (isset($_POST['hasta'])) {
+                $hasta = $_POST['hasta'];
+            } else {
+                $hasta = null;
+            }
 
             //Llamada a la API para actualizar
             return $this->redirect(['index']);
