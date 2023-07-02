@@ -71,7 +71,9 @@ if (!$invitado) {
     }
 
     .btn-primary:hover,
-    .btn-primary:active {
+    .btn-primary:active,
+    .btn-primary:disabled,
+    .btn-outline-primary:active {
         background-color: #de9157 !important;
         color: #fde7a5 !important;
     }
@@ -85,6 +87,10 @@ if (!$invitado) {
         background-color: #DFA67B;
         border-color: #DFA67B;
         color: #fde7a5;
+    }
+
+    .btn-outline-primary:active {
+        border-color: #DFA67B !important;
     }
 
     h1 {
@@ -140,8 +146,8 @@ if (!$invitado) {
         display: none;
     }
 
-    .encabezadoTabla{
-        width:14%;
+    .encabezadoTabla {
+        width: 14%;
     }
 </style>
 

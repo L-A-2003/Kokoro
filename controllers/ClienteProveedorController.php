@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class ClienteProveedorController extends Controller
 {
@@ -62,7 +63,29 @@ class ClienteProveedorController extends Controller
             $direccion = null;
         }
 
-        //Llamada a la API para crear
+        if (isset($_POST['telefono'])) {
+            $telefono = $_POST['telefono'];
+        } else {
+            $telefono = null;
+        }
+
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.clienteProveedor/')
+            ->setContent(Json::encode([
+                'esProveedor' => $tipo,
+                "nombre" => $nombre,
+                "documento" => $documento,
+                "apellido" => $apellido,
+                "correo" => $correo,
+                "departamento" => $departamento,
+                "ciudad" => $ciudad,
+                "direccion" => $direccion,
+                "telefono" => $telefono
+            ]))
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -106,7 +129,30 @@ class ClienteProveedorController extends Controller
                 $direccion = null;
             }
 
-            //Llamada a la API para actualizar
+            if (isset($_POST['telefono'])) {
+                $telefono = $_POST['telefono'];
+            } else {
+                $telefono = null;
+            }
+
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.clienteProveedor?id=' . $id)
+                ->setContent(Json::encode([
+                    'esProveedor' => $tipo,
+                    "nombre" => $nombre,
+                    "documento" => $documento,
+                    "apellido" => $apellido,
+                    "correo" => $correo,
+                    "departamento" => $departamento,
+                    "ciudad" => $ciudad,
+                    "direccion" => $direccion,
+                    "telefono" => $telefono,
+                    "id" => $id
+                ]))
+                ->send();
+            
             return $this->redirect(['index']);
         } else {
 
@@ -120,7 +166,13 @@ class ClienteProveedorController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.clienteProveedor?id=' . $id)
+            ->send();
+
+
         return $this->redirect(['index']);
     }
 
@@ -129,7 +181,7 @@ class ClienteProveedorController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/clientesProveedores/' . $id)
+            ->setUrl('http://localhost:3000/entidades.clienteProveedor?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -140,7 +192,7 @@ class ClienteProveedorController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/clientesProveedores/')
+            ->setUrl('http://localhost:3000/entidades.clienteProveedor/')
             ->send();
 
         return $response->getContent();

@@ -40,7 +40,7 @@ $this->title = 'Productos';
                             <th>Categoría</th>
                             <th>Genero</th>
                             <th>Temporada</th>
-                            <th>Lista de precios</th>
+                            <!--<th>Lista de precios</th>-->
                             <th></th>
                         </tr>
                         <tr id="filtros">
@@ -48,7 +48,7 @@ $this->title = 'Productos';
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <!--<th></th>-->
                             <th></th>
                         </tr>
                     </thead>
@@ -120,7 +120,7 @@ $this->title = 'Productos';
                             </div>
                         </div>
 
-                        <div class="row mt-3 justify-content-center">
+                        <!--<div class="row mt-3 justify-content-center">
                             <div class="col-3 text-end">
                                 <label>Lista de precios:</label>
                             </div>
@@ -132,7 +132,7 @@ $this->title = 'Productos';
                                     <?php } ?>
                                 </select>
                             </div>
-                        </div>
+                        </div>-->
 
                         <div class="row mt-3 justify-content-center">
                             <div class="col-3 text-end">
@@ -219,7 +219,7 @@ $this->title = 'Productos';
                         </div>
                     </div>
 
-                    <div class="row mt-3 justify-content-center">
+                    <!--<div class="row mt-3 justify-content-center">
                         <div class="col-3 text-end">
                             <label>Lista de precios:</label>
                         </div>
@@ -231,7 +231,7 @@ $this->title = 'Productos';
                                 <?php } ?>
                             </select>
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="row mt-3 justify-content-center">
                         <div class="col-3 text-end">
@@ -414,7 +414,7 @@ $this->title = 'Productos';
                         }
                     }
                 },
-                {
+                /*{
                     data: function(data) {
                         if (data.prod_lista_precio != '') {
                             return data.prod_lista_precio;
@@ -422,7 +422,7 @@ $this->title = 'Productos';
                             return "-";
                         }
                     }
-                },
+                },*/
                 {
                     data: function(data) {
                         return "<a class='me-2' onclick='actualizarProducto(" + data.id + ")'><i class='fa-solid fa-pencil'></i></a><a class='' onclick='eliminarProducto(" + data.id + ",`" + data.prod_nombre + "`)'><i class='fa-solid fa-trash'></i></a> <a class='' onclick='cargarPrecios(" + data.id + ")'><i class='fa-solid fa-dollar-sign'></i></a>"
@@ -430,7 +430,7 @@ $this->title = 'Productos';
                 }
             ],
             initComplete: function() {
-                columnas = [0, 1, 2, 3, 4];
+                columnas = [0, 1, 2, 3];
                 this.api().columns(columnas).every(function() {
                     var columna = this;
 
@@ -605,7 +605,7 @@ $this->title = 'Productos';
                 $("#editarCategoria").val(data.prod_categoria);
                 $("#editarGenero").val(data.prod_genero);
                 $("#editarTemporada").val(data.prod_temporada);
-                $("#editarListaPrecios").val(data.prod_lista_precio);
+                //$("#editarListaPrecios").val(data.prod_lista_precio);
                 $("#modalEditarProducto").modal("show");
             },
         });
@@ -630,7 +630,7 @@ $this->title = 'Productos';
         categoria = $("#nuevoCategoria").val();
         genero = $("#nuevoGenero").val();
         temporada = $("#nuevoTemporada").val();
-        listaPrecio = $("#nuevoListaPrecio").val();
+        //listaPrecio = $("#nuevoListaPrecio").val();
         etiquetas = $("#nuevoEtiquetas").val();
         talles = [];
 
@@ -677,7 +677,7 @@ $this->title = 'Productos';
                 return;
             }
 
-            talle = {
+            talleProducto = {
                 id: parseInt(this.id),
                 stock: stock,
                 costo: costo,
@@ -712,7 +712,7 @@ $this->title = 'Productos';
                         categoria: categoria,
                         genero: genero,
                         temporada: temporada,
-                        listaPrecio: listaPrecio,
+                        //listaPrecio: listaPrecio,
                         etiquetas: etiquetas,
                         talles: talles
                     },

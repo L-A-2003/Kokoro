@@ -31,9 +31,11 @@ $this->title = 'Clientes y proveedores';
                             <th>Departamento</th>
                             <th>Ciudad</th>
                             <th>Dirección</th>
+                            <th>Teléfono</th>
                             <th></th>
                         </tr>
                         <tr id="filtros">
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -70,8 +72,8 @@ $this->title = 'Clientes y proveedores';
                             <div class="col">
                                 <select name="tipo" class="form-control" onchange="clienteProveedor('filaCrearApellido', 'crearApellido', this.value)" required>
                                     <option value="">Seleccione una opción</option>
-                                    <option value="C">Cliente</option>
-                                    <option value="P">Proveedor</option>
+                                    <option value="false">Cliente</option>
+                                    <option value="true">Proveedor</option>
                                 </select>
                             </div>
                         </div>
@@ -160,6 +162,15 @@ $this->title = 'Clientes y proveedores';
                             </div>
                         </div>
 
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
+                                <label>Teléfono:</label>
+                            </div>
+                            <div class="col">
+                                <input name="telefono" type="text" placeholder="Teléfono" class="form-control"></input>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -193,8 +204,8 @@ $this->title = 'Clientes y proveedores';
                         <div class="col">
                             <select id="editarTipo" name="tipo" class="form-control" onchange="clienteProveedor('filaEditarApellido', 'editarApellido', this.value)" required>
                                 <option value="">Seleccione una opción</option>
-                                <option value="C">Cliente</option>
-                                <option value="P">Proveedor</option>
+                                <option value="false">Cliente</option>
+                                <option value="true">Proveedor</option>
                             </select>
                         </div>
                     </div>
@@ -283,6 +294,15 @@ $this->title = 'Clientes y proveedores';
                         </div>
                     </div>
 
+                    <div class="row mt-3 justify-content-center">
+                            <div class="col-3 text-end">
+                                <label>Teléfono:</label>
+                            </div>
+                            <div class="col">
+                                <input id="editarTelefono" name="telefono" type="text" placeholder="Teléfono" class="form-control"></input>
+                            </div>
+                        </div>
+
                 </div>
             </div>
 
@@ -355,7 +375,7 @@ $this->title = 'Clientes y proveedores';
             searching: true,
             columns: [{
                     data: function(data) {
-                        if (data.cliprov_tipo == "C") {
+                        if (data.cliprov_tipo == "false") {
                             return "Cliente";
                         } else {
                             return "Proveedor";
@@ -415,6 +435,15 @@ $this->title = 'Clientes y proveedores';
                 },
                 {
                     data: function(data) {
+                        if (data.cliprov_telefono != null && data.cliprov_telefono != "") {
+                            return data.cliprov_telefono;
+                        } else {
+                            return "-";
+                        }
+                    }
+                },
+                {
+                    data: function(data) {
                         return "<a class='me-2' onclick='actualizarClienteProveedor(" + data.id + ")'><i class='fa-solid fa-pencil'></i></a><a class='' onclick='eliminarClienteProveedor(" + data.id + ",`" + data.cliprov_nombre + "`)'><i class='fa-solid fa-trash'></i></a>"
                     }
                 }
@@ -459,6 +488,7 @@ $this->title = 'Clientes y proveedores';
                 $("#editarDepartamento").val(data.cliprov_departamento);
                 $("#editarCiudad").val(data.cliprov_ciudad);
                 $("#editarDireccion").val(data.cliprov_direccion);
+                $("#editarTelefono").val(data.cliprov_telefono);
                 clienteProveedor("filaEditarApellido", "editarApellido", data.cliprov_tipo);
                 $("#modalEditarClienteProveedor").modal("show");
             },
@@ -466,7 +496,7 @@ $this->title = 'Clientes y proveedores';
     }
 
     function clienteProveedor(fila, campo, valor) {
-        if (valor == "C") {
+        if (valor == "false") {
             $("#" + fila).show();
             $("#" + campo).prop("required", true);
         } else {

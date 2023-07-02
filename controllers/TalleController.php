@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class TalleController extends Controller
 {
@@ -30,7 +31,15 @@ class TalleController extends Controller
     {
         $nombre = $_POST['nombre'];
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.talle/')
+            ->setContent(Json::encode([
+                "nombre" => $nombre
+            ]))
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -41,7 +50,16 @@ class TalleController extends Controller
         if (isset($_POST['nombre'])) {
             $nombre = $_POST['nombre'];
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.talle?id=' . $id)
+                ->setContent(Json::encode([
+                    "nombre" => $nombre,
+                    "id" => $id,
+                ]))
+                ->send();
+
             return $this->redirect(['index']);
         } else {
 
@@ -55,7 +73,12 @@ class TalleController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.talle?id=' . $id)
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -63,8 +86,8 @@ class TalleController extends Controller
     {
         $client = new Client();
         $response = $client->createRequest()
-            ->setMethod('get')
-            ->setUrl('http://localhost:3000/talles/' . $id)
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.talle?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -75,7 +98,7 @@ class TalleController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/talles/')
+            ->setUrl('http://localhost:3000/entidades.talle/')
             ->send();
 
         return $response->getContent();

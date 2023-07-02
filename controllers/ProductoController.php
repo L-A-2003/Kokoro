@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class ProductoController extends Controller
 {
@@ -40,11 +41,50 @@ class ProductoController extends Controller
         $genero = $_POST['genero'];
         $categoria = $_POST['categoria'];
         $temporada = $_POST['temporada'];
-        $etiquetas = $_POST['etiquetas'];
-        $listaPrecio = $_POST['listaPrecio'];
+        $etiqueta = $_POST['etiquetas'];
+        //$listaPrecio = $_POST['listaPrecio'];
         $talles = $_POST['talles'];
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('put')
+            ->setUrl('http://localhost:3000/entidades.producto/')
+            ->setContent(Json::encode([
+                "nombre" => $nombre,
+                "genero" => $genero,
+                "categoria" => $categoria,
+                "temporada" => $temporada,
+                "etiqueta" => $etiqueta,
+            ]))
+            ->send();
+
+        $idProducto = $response->getContent();
+        $array = array();
+
+        foreach ($talles as $talle) {
+            $index = null;
+            $index2['producto'] = $idProducto;
+            $index3['talle'] = $talle['id'];
+
+            $index['producto'] = $index2;
+            $index['talle'] = $index3;
+            $index['precioCosto'] = $talle['costo'];
+            $index['precioVenta'] = $talle['venta'];
+            $index['margenGanancia'] = $talle['ganancia'];
+            $index['stock'] = $talle['stock'];
+
+            array_push($array, $index);
+        }
+
+        $client2 = new Client();
+        $response2 = $client2->createRequest()
+            ->setMethod('put')
+            ->setUrl('http://localhost:3000/entidades.producto/')
+            ->setContent(Json::encode([
+                "array" => $array,
+            ]))
+            ->send();
+
         return 0;
     }
 
@@ -57,10 +97,23 @@ class ProductoController extends Controller
             $genero = $_POST['genero'];
             $categoria = $_POST['categoria'];
             $temporada = $_POST['temporada'];
-            $etiquetas = $_POST['etiquetas'];
-            $listaPrecio = $_POST['listaPrecio'];
+            $etiqueta = $_POST['etiquetas'];
+            //$listaPrecio = $_POST['listaPrecio'];
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.producto?id=' . $id)
+                ->setContent(Json::encode([
+                    "nombre" => $nombre,
+                    "genero" => $genero,
+                    "categoria" => $categoria,
+                    "temporada" => $temporada,
+                    "etiqueta" => $etiqueta,
+                    "id" => $id,
+                ]))
+                ->send();
+
             return $this->redirect(['index']);
         } else {
 
@@ -77,7 +130,32 @@ class ProductoController extends Controller
         if (isset($_POST['talles'])) {
             $talles = $_POST['talles'];
 
-            //Llamada a la API para actualizar
+            $array = array();
+
+            foreach ($talles as $talle) {
+                $index = null;
+                $index2['producto'] = $id;
+                $index3['talle'] = $talle['id'];
+
+                $index['producto'] = $index2;
+                $index['talle'] = $index3;
+                $index['precioCosto'] = $talle['costo'];
+                $index['precioVenta'] = $talle['venta'];
+                $index['margenGanancia'] = $talle['ganancia'];
+                $index['stock'] = $talle['stock'];
+
+                array_push($array, $index);
+            }
+
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.producto/')
+                ->setContent(Json::encode([
+                    "array" => $array,
+                ]))
+                ->send();
+
             return 0;
         } else {
 
@@ -91,11 +169,17 @@ class ProductoController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.producto?id=' . $id)
+            ->send();
+
         return $this->redirect(['index']);
     }
 
-    public function actionObtenerTallesProducto(){
+    public function actionObtenerTallesProducto()
+    {
         $id = $_POST['id'];
 
         return ProductoController::obtenerTallesProducto($id);
@@ -106,7 +190,7 @@ class ProductoController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/productos/' . $id)
+            ->setUrl('http://localhost:3000/entidades.producto?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -128,7 +212,7 @@ class ProductoController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/productos/')
+            ->setUrl('http://localhost:3000/entidades.producto/')
             ->send();
 
         return $response->getContent();

@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class TemporadaController extends Controller
 {
@@ -30,7 +31,15 @@ class TemporadaController extends Controller
     {
         $nombre = $_POST['nombre'];
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.temporada/')
+            ->setContent(Json::encode([
+                "nombre" => $nombre
+            ]))
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -41,7 +50,16 @@ class TemporadaController extends Controller
         if (isset($_POST['nombre'])) {
             $nombre = $_POST['nombre'];
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.temporada?id=' . $id)
+                ->setContent(Json::encode([
+                    "nombre" => $nombre,
+                    "id" => $id,
+                ]))
+                ->send();
+
             return $this->redirect(['index']);
         } else {
 
@@ -55,7 +73,12 @@ class TemporadaController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.temporada?id=' . $id)
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -64,7 +87,7 @@ class TemporadaController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/temporadas/' . $id)
+            ->setUrl('http://localhost:3000/entidades.temporada?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -75,7 +98,7 @@ class TemporadaController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/temporadas/')
+            ->setUrl('http://localhost:3000/entidades.temporada/')
             ->send();
 
         return $response->getContent();

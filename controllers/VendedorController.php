@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class VendedorController extends Controller
 {
@@ -33,7 +34,26 @@ class VendedorController extends Controller
         $comision = $_POST['comision'];
         $clave = $_POST['clave'];
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.usuario/')
+            ->setContent(Json::encode([
+                "nickname" => $nick,
+                "nombre" => $nombre,
+                "clave" => $clave,
+            ]))
+            ->send();
+
+        $client2 = new Client();
+        $response2 = $client2->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.vendedor/')
+            ->setContent(Json::encode([
+                "comision" => $comision
+            ]))
+            ->send();
+        
         return 0;
     }
 
@@ -46,7 +66,25 @@ class VendedorController extends Controller
             $nombre = $_POST['nombre'];
             $comision = $_POST['comision'];
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.usuario?id=' . $id)
+                ->setContent(Json::encode([
+                    "nickname" => $nick,
+                    "nombre" => $nombre
+                ]))
+                ->send();
+
+            $client2 = new Client();
+            $response2 = $client2->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.vendedor?id=' . $id)
+                ->setContent(Json::encode([
+                    "comision" => $comision
+                ]))
+                ->send();
+            
             return $this->redirect(['index']);
         } else {
 
@@ -60,7 +98,18 @@ class VendedorController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.usuario?id=' . $id)
+            ->send();
+
+        $client2 = new Client();
+        $response2 = $client2->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.vendedor?id=' . $id)
+            ->send();
+        
         return $this->redirect(['index']);
     }
 
@@ -69,7 +118,7 @@ class VendedorController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/vendedores/' . $id)
+            ->setUrl('http://localhost:3000/entidades.vendedor?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -80,7 +129,7 @@ class VendedorController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/vendedores/')
+            ->setUrl('http://localhost:3000/entidades.vendedor/')
             ->send();
 
         return $response->getContent();

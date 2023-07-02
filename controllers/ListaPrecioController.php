@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class ListaPrecioController extends Controller
 {
@@ -54,7 +55,20 @@ class ListaPrecioController extends Controller
             $hasta = null;
         }
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.listaPrecio/')
+            ->setContent(Json::encode([
+                "nombre" => $nombre,
+                "valor" => $porcentajeModificacion,
+                "temporada" => $temporada,
+                "categoria" => $categoria,
+                "fechaDesde" => $desde,
+                "fechaHasta" => $hasta
+            ]))
+            ->send();
+        
         return $this->redirect(['index']);
     }
 
@@ -85,7 +99,20 @@ class ListaPrecioController extends Controller
                 $hasta = null;
             }
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.listaPrecio?id=' . $id)
+                ->setContent(Json::encode([
+                    "nombre" => $nombre,
+                    "valor" => $porcentajeModificacion,
+                    "temporada" => $temporada,
+                    "categoria" => $categoria,
+                    "fechaDesde" => $desde,
+                    "fechaHasta" => $hasta
+                ]))
+                ->send();
+            
             return $this->redirect(['index']);
         } else {
 
@@ -99,7 +126,12 @@ class ListaPrecioController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.listaPrecio?id=' . $id)
+            ->send();
+        
         return $this->redirect(['index']);
     }
 
@@ -108,7 +140,7 @@ class ListaPrecioController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/listasPrecios/' . $id)
+            ->setUrl('http://localhost:3000/entidades.listaPrecio?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -119,7 +151,7 @@ class ListaPrecioController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/listasPrecios/')
+            ->setUrl('http://localhost:3000/entidades.listaPrecio/')
             ->send();
 
         return $response->getContent();

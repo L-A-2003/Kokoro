@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\httpclient\Client;
+use yii\helpers\Json;
 
 class CategoriaController extends Controller
 {
@@ -30,7 +31,15 @@ class CategoriaController extends Controller
     {
         $nombre = $_POST['nombre'];
 
-        //Llamada a la API para crear
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('post')
+            ->setUrl('http://localhost:3000/entidades.categoria/')
+            ->setContent(Json::encode([
+                "nombre" => $nombre
+            ]))
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -41,12 +50,20 @@ class CategoriaController extends Controller
         if (isset($_POST['nombre'])) {
             $nombre = $_POST['nombre'];
 
-            //Llamada a la API para actualizar
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('put')
+                ->setUrl('http://localhost:3000/entidades.categoria?id=' . $id)
+                ->setContent(Json::encode([
+                    "nombre" => $nombre,
+                    "id" => $id,
+                ]))
+                ->send();
+
             return $this->redirect(['index']);
         } else {
 
             $categoria = $this->obtenerCategoria($id);
-
             return $categoria;
         }
     }
@@ -55,7 +72,12 @@ class CategoriaController extends Controller
     {
         $id = $_POST['id'];
 
-        //Llamada a la API para borrar
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('delete')
+            ->setUrl('http://localhost:3000/entidades.categoria?id=' . $id)
+            ->send();
+
         return $this->redirect(['index']);
     }
 
@@ -64,7 +86,7 @@ class CategoriaController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/categorias/' . $id)
+            ->setUrl('http://localhost:3000/entidades.categoria?id=' . $id)
             ->send();
 
         return $response->getContent();
@@ -75,7 +97,7 @@ class CategoriaController extends Controller
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('get')
-            ->setUrl('http://localhost:3000/categorias/')
+            ->setUrl('http://localhost:3000/entidades.categoria/')
             ->send();
 
         return $response->getContent();
